@@ -1,10 +1,13 @@
 package SeleniumHere.Topics;
 
 import org.openqa.selenium.By;
+import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.FluentWait;
+import org.openqa.selenium.support.ui.Wait;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.testng.annotations.Test;
 
@@ -29,8 +32,17 @@ public class WaitsDemo {
         System.out.println(driver.findElement(element).getText());
         driver.quit();
     }
+    @Test
     public void Fluent(){
         WebDriver driver=new ChromeDriver();
         driver.get("https://omayo.blogspot.com/");
+        Wait<WebDriver> fleuntWait=new FluentWait<>(driver)
+                .withTimeout(Duration.ofSeconds(60))
+                .pollingEvery(Duration.ofSeconds(5))
+                .ignoring(NoSuchElementException.class);
+       By element= By.xpath("//*[normalize-space()='This text is displayed after 10 seconds of wait.']");
+           fleuntWait.until(ExpectedConditions.visibilityOfElementLocated(element));
+        System.out.println(driver.findElement(element).getText());
+        driver.quit();
     }
 }
