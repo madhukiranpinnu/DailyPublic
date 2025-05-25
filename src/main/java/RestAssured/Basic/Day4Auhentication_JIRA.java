@@ -11,7 +11,7 @@ import static io.restassured.RestAssured.*;
 import static org.hamcrest.MatcherAssert.*;
 import static org.hamcrest.Matchers.*;
 public class Day4Auhentication_JIRA {
-    String jiraId=null;
+    String jiraId="10005";
     @Test
     public void BasicAuthentication(){
         String body="{\n" +
@@ -68,21 +68,32 @@ public class Day4Auhentication_JIRA {
     }
     @Test
     public void AddScreenshotToBug(){
-        given()
+      Response response=  given()
                 .baseUri("https://mkptest939.atlassian.net")
                 .basePath("/rest/api/3/issue")
+                .contentType(ContentType.MULTIPART)
                 .header("Authorization",
                         "Basic bWtwdGVzdDkzOUBnbWFpbC5jb206QVRBVFQzeEZmR0YwazV6ZWVTeEh1ekx0VnRvT2ViZzFCb0c2c1otaVJfLWE3SHRiUU9aQVRpbkthTWJEb3BtVjZaVHhieXRiZ2hPanFranhqdEZwMWxNeUVvNUU4SG4weE5rQy1kcHl0NjRMUmdpSEJXTjBwNnJxakFjcld3S2M3QmszeERIZmtzQlVKM05DbGN2ZE10TDlHWVFPb2VtOWJaN2dVU2FnSzF4b0JfV1BCaEx4cGFRPTk0QUU1MDBE")
                 .header("X-Atlassian-Token","no-check")
-                .multiPart("file",new File(System.getProperty("user.dir")+""))
-                .log()
-                .all()
+                .multiPart("file",new File(System.getProperty("user.dir")+"/src/main/resources/Formdata/sc.png"))
                 .when()
                 .pathParam("jiraid",jiraId)
                 .post("{jiraid}/attachments")
                 .then()
                 .log()
-                .all();
-
+                .all()
+                .extract()
+                .response();
+      Assert.assertEquals(response.getStatusCode(),200);
+      Assert.assertTrue(response.getTime()<3000);
+      Assert.assertNotNull(response.getBody());
+      Assert.assertEquals(response.getHeader("Connection"),"keep-alive");
+      Assert.assertEquals(response.getHeader("Vary"),"Accept-Encoding");
+      Assert.assertEquals(response.getHeader("Server"),"AtlassianEdge");
+      Assert.assertEquals(response.getHeader("Transfer-Encoding"),"chunked");
+      Assert.assertTrue(response.jsonPath().getString("self").contains("https://mkptest939.atlassian.net/"));
+      Assert.assertEquals(response.jsonPath().getString("displayName"),"madhu");
+      Assert.assertTrue(response.jsonPath().getBoolean("active"));
+      Assert.assertEquals(response.jsonPath().getString("accountType"),"atlassian");
     }
 }
