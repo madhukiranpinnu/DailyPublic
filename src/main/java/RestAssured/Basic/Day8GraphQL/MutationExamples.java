@@ -58,6 +58,5 @@ public class MutationExamples {
         System.out.println(response.jsonPath().getInt("data.createLocation.id"));
         System.out.println(response.jsonPath().getInt("data.createCharacter.id"));
         System.out.println(response.jsonPath().getInt("data.createEpisode.id"));
-
     }
 }
